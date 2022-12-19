@@ -1,0 +1,139 @@
+{
+	"frames": [
+		{
+			"filename": "run_01",
+			"frame": { "x": 5, "y": 2, "w": 44, "h": 72 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 44, "h": 72 },
+			"sourceSize": { "w": 44, "h": 72 }
+		},
+		{
+			"filename": "run_03",
+			"frame": { "x": 164, "y": 2, "w": 45, "h": 71 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 45, "h": 71 },
+			"sourceSize": { "w": 45, "h": 71 }
+		},
+		{
+			"filename": "run_02",
+			"frame": { "x": 87, "y": 3, "w": 44, "h": 71 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 44, "h": 71 },
+			"sourceSize": { "w": 44, "h": 71 }
+		},
+		{
+			"filename": "run_04",
+			"frame": { "x": 247, "y": 3, "w": 45, "h": 71 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 45, "h": 71 },
+			"sourceSize": { "w": 45, "h": 71 }
+		},
+		{
+			"filename": "run_05",
+			"frame": { "x": 320, "y": 3, "w": 51, "h": 75 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 51, "h": 75 },
+			"sourceSize": { "w": 51, "h": 75 }
+		},
+		{
+			"filename": "run_08",
+			"frame": { "x": 564, "y": 4, "w": 44, "h": 70 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 44, "h": 70 },
+			"sourceSize": { "w": 44, "h": 70 }
+		},
+		{
+			"filename": "run_06",
+			"frame": { "x": 398, "y": 5, "w": 51, "h": 74 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 51, "h": 74 },
+			"sourceSize": { "w": 51, "h": 74 }
+		},
+		{
+			"filename": "run_07",
+			"frame": { "x": 482, "y": 6, "w": 44, "h": 68 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 44, "h": 68 },
+			"sourceSize": { "w": 44, "h": 68 }
+		},
+		{
+			"filename": "attack_01",
+			"frame": { "x": 2, "y": 107, "w": 51, "h": 71 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 51, "h": 71 },
+			"sourceSize": { "w": 51, "h": 71 }
+		},
+		{
+			"filename": "attack_05",
+			"frame": { "x": 323, "y": 107, "w": 47, "h": 72 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 47, "h": 72 },
+			"sourceSize": { "w": 47, "h": 72 }
+		},
+		{
+			"filename": "attack_04",
+			"frame": { "x": 242, "y": 108, "w": 50, "h": 71 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 50, "h": 71 },
+			"sourceSize": { "w": 50, "h": 71 }
+		},
+		{
+			"filename": "attack_02",
+			"frame": { "x": 85, "y": 109, "w": 54, "h": 72 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 54, "h": 72 },
+			"sourceSize": { "w": 54, "h": 72 }
+		},
+		{
+			"filename": "attack_03",
+			"frame": { "x": 157, "y": 109, "w": 64, "h": 66 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 66 },
+			"sourceSize": { "w": 64, "h": 66 }
+		},
+		{
+			"filename": "attack_06",
+			"frame": { "x": 396, "y": 110, "w": 55, "h": 70 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 55, "h": 70 },
+			"sourceSize": { "w": 55, "h": 70 }
+		},
+		{
+			"filename": "jump",
+			"frame": { "x": 0, "y": 215, "w": 47, "h": 74 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 47, "h": 74 },
+			"sourceSize": { "w": 47, "h": 74 }
+		},
+		{
+			"filename": "idle",
+			"frame": { "x": 84, "y": 216, "w": 37, "h": 73 },
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 37, "h": 73 },
+			"sourceSize": { "w": 37, "h": 73 }
+		}
+	],
+	"meta": {
+		"app": "https://www.leshylabs.com/apps/sstool/",
+		"version": "Leshy SpriteSheet Tool v0.8.4",
+		"image": "spritesheet.png",
+		"size": { "w": 610, "h": 289 },
+		"scale": 1
+	}
+}

@@ -6,12 +6,21 @@ export class GameScene extends Phaser.Scene {
 	private groundLayer: TilemapLayer;
 	private coinLayer: TilemapLayer;
 	private player: SpriteWithDynamicBody;
+	private attack: SpriteWithDynamicBody;
 	private cursors: CursorKeys;
 	private score: number = 0;
 	private text: GameText;
+	private lastAttackTime: number = 0;
+	private isAttacking: boolean = false;
+	private baseAttackSpeed: number = 800;
+	private attackSpeedMultiplier: number = 1;
 
 	private get isJumpKeyPressed(): boolean {
 		return this.cursors.up.isDown;
+	}
+
+	private get attackSpeed(): number {
+		return this.baseAttackSpeed * this.attackSpeedMultiplier;
 	}
 
 	constructor() {
@@ -21,6 +30,7 @@ export class GameScene extends Phaser.Scene {
 	public create(): void {
 		this.createWorld();
 		this.createPlayer();
+		this.createAttack();
 		this.createCoins();
 		this.createCamera();
 		this.createAnims();
@@ -31,8 +41,12 @@ export class GameScene extends Phaser.Scene {
 		this.cursors = this.input.keyboard.createCursorKeys();
 	}
 
-	public update(): void {
-		this.handleInputs();
+	public update(time: number, delta: number): void {
+		this.handleInputs(time);
+
+		if (this.isAttacking) {
+			this.stickAttackToPlayer();
+		}
 	}
 
 	private createWorld(): void {
@@ -53,6 +67,10 @@ export class GameScene extends Phaser.Scene {
 		this.player.body.setSize(this.player.width, this.player.height - 8);
 	}
 
+	private createAttack(): void {
+		this.attack = this.physics.add.sprite(0, 0, Keys.Atlases.Attack).setScale(0.2).disableBody().setAlpha(0).setOrigin(0, 0.5);
+	}
+
 	private createCoins(): void {
 		const coinTiles = this.map.addTilesetImage(Keys.Images.Coin);
 		this.coinLayer = this.map.createLayer(Keys.Layers.Coins, coinTiles, 0, 0);
@@ -70,21 +88,35 @@ export class GameScene extends Phaser.Scene {
 	private createAnims(): void {
 		this.anims.create({
 			key: Keys.Animations.Walk,
-			frames: this.anims.generateFrameNames(Keys.Atlases.Player, { prefix: "p1_walk", start: 1, end: 11, zeroPad: 2 }),
-			frameRate: 10,
+			frames: this.anims.generateFrameNames(Keys.Atlases.Player, { prefix: "run_", start: 1, end: 8, zeroPad: 2 }),
+			frameRate: 24,
 			repeat: -1,
 		});
 
 		this.anims.create({
 			key: Keys.Animations.Idle,
-			frames: [{ key: Keys.Atlases.Player, frame: "p1_stand" }],
+			frames: [{ key: Keys.Atlases.Player, frame: "idle" }],
 			frameRate: 10,
 		});
 
 		this.anims.create({
 			key: Keys.Animations.Jump,
-			frames: [{ key: Keys.Atlases.Player, frame: "p1_jump" }],
+			frames: [{ key: Keys.Atlases.Player, frame: "jump" }],
 			frameRate: 10,
+		});
+
+		this.anims.create({
+			key: Keys.Animations.Attack,
+			frames: this.anims.generateFrameNames(Keys.Atlases.Attack, { prefix: "File", start: 1, end: 6, zeroPad: 1, suffix: ".png" }),
+			frameRate: 24,
+			repeat: 0,
+		});
+
+		this.anims.create({
+			key: Keys.Animations.PlayerAttack,
+			frames: this.anims.generateFrameNames(Keys.Atlases.Player, { prefix: "attack_", start: 1, end: 6, zeroPad: 2 }),
+			frameRate: 24,
+			repeat: 0,
 		});
 	}
 
@@ -93,17 +125,21 @@ export class GameScene extends Phaser.Scene {
 		this.text.setScrollFactor(0);
 	}
 
-	private handleInputs(): void {
+	private handleInputs(time: number): void {
 		if (this.cursors.left.isDown) {
 			this.player.body.setVelocityX(-200);
 
-			this.player.anims.play(Keys.Animations.Walk, true);
+			if (this.player.body.onFloor()) {
+				this.player.anims.play(Keys.Animations.Walk, true);
+			}
 
 			this.player.flipX = true;
 		} else if (this.cursors.right.isDown) {
 			this.player.body.setVelocityX(200);
 
-			this.player.anims.play(Keys.Animations.Walk, true);
+			if (this.player.body.onFloor()) {
+				this.player.anims.play(Keys.Animations.Walk, true);
+			}
 
 			this.player.flipX = false;
 		}
@@ -113,9 +149,27 @@ export class GameScene extends Phaser.Scene {
 			this.player.anims.play(Keys.Animations.Jump, true);
 		}
 
-		if (this.cursors.left.isUp && this.cursors.right.isUp && this.player.body.onFloor() && !this.isJumpKeyPressed) {
+		if (
+			this.cursors.left.isUp &&
+			this.cursors.right.isUp &&
+			this.player.body.onFloor() &&
+			!this.isJumpKeyPressed &&
+			!this.isAttacking
+		) {
 			this.player.setVelocityX(0);
 			this.player.anims.play(Keys.Animations.Idle, true);
+		}
+
+		if (this.cursors.space.isDown && time - this.lastAttackTime > this.attackSpeed) {
+			this.isAttacking = true;
+			this.stickAttackToPlayer();
+			this.attack.setAlpha(1);
+			this.attack.anims.play(Keys.Animations.Attack, false).once("animationcomplete", () => this.attack.setAlpha(0));
+			this.player.anims.play(Keys.Animations.PlayerAttack, false).once("animationcomplete", () => {
+				this.isAttacking = false;
+				this.player.anims.play(Keys.Animations.Idle, true);
+			});
+			this.lastAttackTime = time;
 		}
 	}
 
@@ -123,6 +177,25 @@ export class GameScene extends Phaser.Scene {
 		this.coinLayer.removeTileAt(tile.x, tile.y);
 		this.score++;
 		this.text.setText(this.score.toString());
+
+		if (this.score % 5 === 0) {
+			this.attackSpeedMultiplier -= 0.2;
+		}
+
 		return false;
+	}
+
+	private stickAttackToPlayer(): void {
+		this.attack.flipX = this.player.flipX;
+		const x = this.player.body.position.x + this.player.body.width / 2;
+		const y = this.player.body.position.y + this.player.body.height / 2;
+
+		if (this.attack.flipX) {
+			this.attack.setOrigin(1, 0.5);
+		} else {
+			this.attack.setOrigin(0, 0.5);
+		}
+
+		this.attack.setPosition(x, y);
 	}
 }

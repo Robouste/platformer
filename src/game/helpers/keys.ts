@@ -12,6 +12,7 @@ export namespace Keys {
 		Idle = "idle",
 		Jump = "jump",
 		Attack = "attack",
+		PlayerAttack = "player-attack",
 	}
 
 	export enum Audio {}
@@ -27,6 +28,7 @@ export namespace Keys {
 
 	export enum Atlases {
 		Player = "player",
+		Attack = "attack",
 	}
 
 	export enum Layers {
