@@ -1,5 +1,5 @@
 import { BaseScene } from "../base.scene";
-import { BasicMovements } from "../helpers/basic-movement";
+import { Playercontroller } from "../controllers/player.controller";
 import { Keys } from "../helpers/keys";
 import { ArcadeSprite, CursorKeys, GameText, SpriteWithDynamicBody, Tile, Tilemap, TilemapLayer } from "../helpers/types";
 
@@ -17,6 +17,7 @@ export class GameScene extends BaseScene {
 	private wasBodyInTheAir: boolean = false;
 	private baseAttackSpeed: number = 800;
 	private attackSpeedMultiplier: number = 1;
+	private playerController: Playercontroller;
 
 	private get isJumpKeyPressed(): boolean {
 		return this.cursors.up.isDown;
@@ -47,10 +48,9 @@ export class GameScene extends BaseScene {
 		const music = this.game.sound.add(Keys.Musics.Level1, { loop: true, volume: 0.3 });
 
 		music.play();
-		// this.sound.play(Keys.Musics.Level1, {
-		// 	loop: true,
-		// 	volume: 0.3,
-		// });
+
+		this.playerController = new Playercontroller(this.player, this.sound);
+		this.playerController.setState("idle");
 	}
 
 	public update(time: number, delta: number): void {
@@ -63,6 +63,7 @@ export class GameScene extends BaseScene {
 
 		if (this.player.body.onFloor() && this.wasBodyInTheAir) {
 			this.sound.play(Keys.Sfx.Land);
+			this.playerController.setState("idle", true);
 		}
 
 		this.wasBodyInTheAir = !this.player.body.onFloor();
@@ -152,30 +153,14 @@ export class GameScene extends BaseScene {
 	}
 
 	private handleInputs(time: number): void {
-		// if (this.cursors.left.isDown) {
-		// 	this.player.body.setVelocityX(-200);
-
-		// 	if (this.player.body.onFloor()) {
-		// 		this.player.anims.play(Keys.Animations.Walk, true);
-		// 	}
-
-		// 	this.player.flipX = true;
-		// } else if (this.cursors.right.isDown) {
-		// 	this.player.body.setVelocityX(200);
-
-		// 	if (this.player.body.onFloor()) {
-		// 		this.player.anims.play(Keys.Animations.Walk, true);
-		// 	}
-
-		// 	this.player.flipX = false;
-		// }
-
-		BasicMovements.handle(this.cursors, this.player, Keys.Animations.Walk);
+		if (this.cursors.left.isDown) {
+			this.playerController.setState("left");
+		} else if (this.cursors.right.isDown) {
+			this.playerController.setState("right");
+		}
 
 		if (this.isJumpKeyPressed && this.player.body.onFloor()) {
-			this.player.body.setVelocityY(-500);
-			this.player.anims.play(Keys.Animations.Jump, true);
-			this.sound.play(Keys.Sfx.Jump);
+			this.playerController.setState("jump");
 		}
 
 		if (
@@ -185,8 +170,7 @@ export class GameScene extends BaseScene {
 			!this.isJumpKeyPressed &&
 			!this.isAttacking
 		) {
-			this.player.setVelocityX(0);
-			this.player.anims.play(Keys.Animations.Idle, true);
+			this.playerController.setState("idle");
 		}
 
 		if (this.cursors.space.isDown && time - this.lastAttackTime > this.attackSpeed) {
@@ -197,7 +181,7 @@ export class GameScene extends BaseScene {
 			this.attack.anims.play(Keys.Animations.Attack, true).once("animationcomplete", () => this.attack.setAlpha(0));
 			this.player.anims.play(Keys.Animations.PlayerAttack, true).once("animationcomplete", () => {
 				if (this.player.body.onFloor()) {
-					this.player.anims.play(Keys.Animations.Idle);
+					this.playerController.setState("idle", true);
 				} else {
 					this.player.anims.play(Keys.Animations.Jump);
 				}
