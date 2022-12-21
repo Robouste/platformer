@@ -44,10 +44,13 @@ export class GameScene extends BaseScene {
 		this.physics.add.collider(this.groundLayer, this.player);
 
 		this.cursors = this.input.keyboard.createCursorKeys();
-		this.sound.play(Keys.Musics.Level1, {
-			loop: true,
-			volume: 0.3,
-		});
+		const music = this.game.sound.add(Keys.Musics.Level1, { loop: true, volume: 0.3 });
+
+		music.play();
+		// this.sound.play(Keys.Musics.Level1, {
+		// 	loop: true,
+		// 	volume: 0.3,
+		// });
 	}
 
 	public update(time: number, delta: number): void {
@@ -193,6 +196,11 @@ export class GameScene extends BaseScene {
 			this.attack.setAlpha(1);
 			this.attack.anims.play(Keys.Animations.Attack, true).once("animationcomplete", () => this.attack.setAlpha(0));
 			this.player.anims.play(Keys.Animations.PlayerAttack, true).once("animationcomplete", () => {
+				if (this.player.body.onFloor()) {
+					this.player.anims.play(Keys.Animations.Idle);
+				} else {
+					this.player.anims.play(Keys.Animations.Jump);
+				}
 				this.isAttacking = false;
 			});
 

@@ -14,3 +14,4 @@ export declare type GameGroup = Phaser.GameObjects.Group;
 export declare type Tilemap = Phaser.Tilemaps.Tilemap;
 export declare type TilemapLayer = Phaser.Tilemaps.TilemapLayer;
 export declare type Tile = Phaser.Tilemaps.Tile;
+export declare type KeyboardKey = Phaser.Input.Keyboard.Key;

@@ -11,6 +11,8 @@ export class PreloadScene extends Phaser.Scene {
 		this.load.spritesheet(Keys.Sprites.Tiles, "assets/tiles/tiles.png", { frameWidth: 70, frameHeight: 70 });
 
 		this.load.image(Keys.Images.Coin, "assets/images/coinGold.png");
+		this.load.image(Keys.Images.GlassPanel, "assets/images/glassPanel.png");
+		this.load.image(Keys.Images.CursorHand, "assets/images/cursor_hand.png");
 
 		this.load.atlas(Keys.Atlases.Player, "assets/sprites/player.png", "assets/sprites/player.json");
 		this.load.atlas(Keys.Atlases.Attack, "assets/sprites/attack.png", "assets/sprites/attack.json");

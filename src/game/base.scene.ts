@@ -7,7 +7,7 @@ export abstract class BaseScene extends Phaser.Scene {
 
 	public create(): void {
 		this.sound.pauseOnBlur = false;
-		// this.sound.mute = true;
+		this.sound.mute = true;
 	}
 
 	public update(time: number, delta: number): void {

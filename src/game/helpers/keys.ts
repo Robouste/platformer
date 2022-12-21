@@ -1,6 +1,8 @@
 export namespace Keys {
 	export enum Images {
 		Coin = "coin",
+		GlassPanel = "glass-panel",
+		CursorHand = "cursor-hand",
 	}
 
 	export enum Sprites {
@@ -63,5 +65,9 @@ export namespace Keys {
 
 	export enum MouseEvents {
 		PointerDown = "pointerdown",
+	}
+
+	export enum Events {
+		Selected = "selected",
 	}
 }
