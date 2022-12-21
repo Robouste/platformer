@@ -1,3 +1,4 @@
+import { BasicMovements } from "../helpers/basic-movement";
 import { Keys } from "../helpers/keys";
 import { ArcadeSprite, CursorKeys, GameText, SpriteWithDynamicBody, Tile, Tilemap, TilemapLayer } from "../helpers/types";
 
@@ -12,6 +13,7 @@ export class GameScene extends Phaser.Scene {
 	private text: GameText;
 	private lastAttackTime: number = 0;
 	private isAttacking: boolean = false;
+	private wasBodyInTheAir: boolean = false;
 	private baseAttackSpeed: number = 800;
 	private attackSpeedMultiplier: number = 1;
 
@@ -39,6 +41,12 @@ export class GameScene extends Phaser.Scene {
 		this.physics.add.collider(this.groundLayer, this.player);
 
 		this.cursors = this.input.keyboard.createCursorKeys();
+		this.sound.pauseOnBlur = false;
+		this.sound.play(Keys.Audio.Level1, {
+			loop: true,
+			volume: 0.3,
+		});
+		this.sound.mute = true;
 	}
 
 	public update(time: number, delta: number): void {
@@ -47,6 +55,13 @@ export class GameScene extends Phaser.Scene {
 		if (this.isAttacking) {
 			this.stickAttackToPlayer();
 		}
+
+		if (this.player.body.onFloor() && this.wasBodyInTheAir) {
+			this.sound.play(Keys.Audio.Land);
+		}
+
+		this.wasBodyInTheAir = !this.player.body.onFloor();
+		console.log(this.player.body.onFloor());
 	}
 
 	private createWorld(): void {
@@ -62,9 +77,10 @@ export class GameScene extends Phaser.Scene {
 
 	private createPlayer(): void {
 		this.player = this.physics.add.sprite(200, 200, Keys.Atlases.Player);
-		this.player.setBounce(0.2); // Player will bounce again obsticles
+		this.player.setOrigin(0, 1);
+		this.player.setBounce(0);
 		this.player.setCollideWorldBounds(true); // Don't go out of the map
-		this.player.body.setSize(this.player.width, this.player.height - 8);
+		// this.player.body.setSize(this.player.width, this.player.height - 8);
 	}
 
 	private createAttack(): void {
@@ -88,8 +104,8 @@ export class GameScene extends Phaser.Scene {
 	private createAnims(): void {
 		this.anims.create({
 			key: Keys.Animations.Walk,
-			frames: this.anims.generateFrameNames(Keys.Atlases.Player, { prefix: "run_", start: 1, end: 8, zeroPad: 2 }),
-			frameRate: 24,
+			frames: this.anims.generateFrameNames(Keys.Atlases.P_Run, { prefix: "player_", start: 1, end: 8, zeroPad: 2, suffix: ".png" }),
+			frameRate: 10,
 			repeat: -1,
 		});
 
@@ -107,14 +123,20 @@ export class GameScene extends Phaser.Scene {
 
 		this.anims.create({
 			key: Keys.Animations.Attack,
-			frames: this.anims.generateFrameNames(Keys.Atlases.Attack, { prefix: "File", start: 1, end: 6, zeroPad: 1, suffix: ".png" }),
+			frames: this.anims.generateFrameNames(Keys.Atlases.Attack, { prefix: "attack_", start: 1, end: 4, zeroPad: 2, suffix: ".png" }),
 			frameRate: 24,
 			repeat: 0,
 		});
 
 		this.anims.create({
 			key: Keys.Animations.PlayerAttack,
-			frames: this.anims.generateFrameNames(Keys.Atlases.Player, { prefix: "attack_", start: 1, end: 6, zeroPad: 2 }),
+			frames: this.anims.generateFrameNames(Keys.Atlases.P_Attack, {
+				prefix: "p_attack_",
+				start: 1,
+				end: 4,
+				zeroPad: 2,
+				suffix: ".png",
+			}),
 			frameRate: 24,
 			repeat: 0,
 		});
@@ -126,27 +148,34 @@ export class GameScene extends Phaser.Scene {
 	}
 
 	private handleInputs(time: number): void {
-		if (this.cursors.left.isDown) {
-			this.player.body.setVelocityX(-200);
+		// if (this.cursors.left.isDown) {
+		// 	this.player.body.setVelocityX(-200);
 
-			if (this.player.body.onFloor()) {
-				this.player.anims.play(Keys.Animations.Walk, true);
-			}
+		// 	if (this.player.body.onFloor()) {
+		// 		this.player.anims.play(Keys.Animations.Walk, true);
+		// 	}
 
-			this.player.flipX = true;
-		} else if (this.cursors.right.isDown) {
-			this.player.body.setVelocityX(200);
+		// 	this.player.flipX = true;
+		// } else if (this.cursors.right.isDown) {
+		// 	this.player.body.setVelocityX(200);
 
-			if (this.player.body.onFloor()) {
-				this.player.anims.play(Keys.Animations.Walk, true);
-			}
+		// 	if (this.player.body.onFloor()) {
+		// 		this.player.anims.play(Keys.Animations.Walk, true);
+		// 	}
 
-			this.player.flipX = false;
-		}
+		// 	this.player.flipX = false;
+		// }
+
+		this.input.keyboard.on(Keys.KeydownEvents.M, () => {
+			this.sound.mute = !this.sound.mute;
+		});
+
+		BasicMovements.handle(this.cursors, this.player, Keys.Animations.Walk);
 
 		if (this.isJumpKeyPressed && this.player.body.onFloor()) {
 			this.player.body.setVelocityY(-500);
 			this.player.anims.play(Keys.Animations.Jump, true);
+			this.sound.play(Keys.Audio.Jump);
 		}
 
 		if (
@@ -163,12 +192,13 @@ export class GameScene extends Phaser.Scene {
 		if (this.cursors.space.isDown && time - this.lastAttackTime > this.attackSpeed) {
 			this.isAttacking = true;
 			this.stickAttackToPlayer();
+			this.sound.play(Keys.Audio.Attack);
 			this.attack.setAlpha(1);
-			this.attack.anims.play(Keys.Animations.Attack, false).once("animationcomplete", () => this.attack.setAlpha(0));
-			this.player.anims.play(Keys.Animations.PlayerAttack, false).once("animationcomplete", () => {
+			this.attack.anims.play(Keys.Animations.Attack, true).once("animationcomplete", () => this.attack.setAlpha(0));
+			this.player.anims.play(Keys.Animations.PlayerAttack, true).once("animationcomplete", () => {
 				this.isAttacking = false;
-				this.player.anims.play(Keys.Animations.Idle, true);
 			});
+
 			this.lastAttackTime = time;
 		}
 	}
@@ -177,6 +207,9 @@ export class GameScene extends Phaser.Scene {
 		this.coinLayer.removeTileAt(tile.x, tile.y);
 		this.score++;
 		this.text.setText(this.score.toString());
+		this.sound.play(Keys.Audio.Collect, {
+			volume: 1,
+		});
 
 		if (this.score % 5 === 0) {
 			this.attackSpeedMultiplier -= 0.2;

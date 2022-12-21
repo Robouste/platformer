@@ -122,11 +122,11 @@
 		},
 		{
 			"filename": "idle",
-			"frame": { "x": 84, "y": 216, "w": 37, "h": 73 },
+			"frame": { "x": 84, "y": 216, "w": 37, "h": 72 },
 			"rotated": false,
 			"trimmed": false,
-			"spriteSourceSize": { "x": 0, "y": 0, "w": 37, "h": 73 },
-			"sourceSize": { "w": 37, "h": 73 }
+			"spriteSourceSize": { "x": 0, "y": 0, "w": 37, "h": 72 },
+			"sourceSize": { "w": 37, "h": 72 }
 		}
 	],
 	"meta": {

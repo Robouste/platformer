@@ -4,6 +4,7 @@
 	"description": "",
 	"scripts": {
 		"start": "webpack serve --open --config webpack.development.js",
+		"serve": "webpack serve --config webpack.development.js",
 		"build": "webpack --config webpack.production.js"
 	},
 	"keywords": [],

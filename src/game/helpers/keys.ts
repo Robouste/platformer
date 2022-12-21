@@ -15,7 +15,13 @@ export namespace Keys {
 		PlayerAttack = "player-attack",
 	}
 
-	export enum Audio {}
+	export enum Audio {
+		Level1 = "level-1",
+		Collect = "collect",
+		Jump = "jump",
+		Attack = "attack",
+		Land = "land",
+	}
 
 	export enum Scenes {
 		Preload = "preload",
@@ -29,6 +35,8 @@ export namespace Keys {
 	export enum Atlases {
 		Player = "player",
 		Attack = "attack",
+		P_Run = "p_run",
+		P_Attack = "p_attack",
 	}
 
 	export enum Layers {
@@ -41,6 +49,7 @@ export namespace Keys {
 		ArrowDown = "keydown-DOWN",
 		ArrowUp = "keydown-UP",
 		P = "keydown-P",
+		M = "keydown-M",
 	}
 
 	export enum KeyupEvents {
