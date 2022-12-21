@@ -1,8 +1,9 @@
+import { BaseScene } from "../base.scene";
 import { BasicMovements } from "../helpers/basic-movement";
 import { Keys } from "../helpers/keys";
 import { ArcadeSprite, CursorKeys, GameText, SpriteWithDynamicBody, Tile, Tilemap, TilemapLayer } from "../helpers/types";
 
-export class GameScene extends Phaser.Scene {
+export class GameScene extends BaseScene {
 	private map: Tilemap;
 	private groundLayer: TilemapLayer;
 	private coinLayer: TilemapLayer;
@@ -30,6 +31,8 @@ export class GameScene extends Phaser.Scene {
 	}
 
 	public create(): void {
+		super.create();
+
 		this.createWorld();
 		this.createPlayer();
 		this.createAttack();
@@ -41,15 +44,14 @@ export class GameScene extends Phaser.Scene {
 		this.physics.add.collider(this.groundLayer, this.player);
 
 		this.cursors = this.input.keyboard.createCursorKeys();
-		this.sound.pauseOnBlur = false;
-		this.sound.play(Keys.Audio.Level1, {
+		this.sound.play(Keys.Musics.Level1, {
 			loop: true,
 			volume: 0.3,
 		});
-		this.sound.mute = true;
 	}
 
 	public update(time: number, delta: number): void {
+		super.update(time, delta);
 		this.handleInputs(time);
 
 		if (this.isAttacking) {
@@ -57,11 +59,10 @@ export class GameScene extends Phaser.Scene {
 		}
 
 		if (this.player.body.onFloor() && this.wasBodyInTheAir) {
-			this.sound.play(Keys.Audio.Land);
+			this.sound.play(Keys.Sfx.Land);
 		}
 
 		this.wasBodyInTheAir = !this.player.body.onFloor();
-		console.log(this.player.body.onFloor());
 	}
 
 	private createWorld(): void {
@@ -166,16 +167,12 @@ export class GameScene extends Phaser.Scene {
 		// 	this.player.flipX = false;
 		// }
 
-		this.input.keyboard.on(Keys.KeydownEvents.M, () => {
-			this.sound.mute = !this.sound.mute;
-		});
-
 		BasicMovements.handle(this.cursors, this.player, Keys.Animations.Walk);
 
 		if (this.isJumpKeyPressed && this.player.body.onFloor()) {
 			this.player.body.setVelocityY(-500);
 			this.player.anims.play(Keys.Animations.Jump, true);
-			this.sound.play(Keys.Audio.Jump);
+			this.sound.play(Keys.Sfx.Jump);
 		}
 
 		if (
@@ -192,7 +189,7 @@ export class GameScene extends Phaser.Scene {
 		if (this.cursors.space.isDown && time - this.lastAttackTime > this.attackSpeed) {
 			this.isAttacking = true;
 			this.stickAttackToPlayer();
-			this.sound.play(Keys.Audio.Attack);
+			this.sound.play(Keys.Sfx.Attack);
 			this.attack.setAlpha(1);
 			this.attack.anims.play(Keys.Animations.Attack, true).once("animationcomplete", () => this.attack.setAlpha(0));
 			this.player.anims.play(Keys.Animations.PlayerAttack, true).once("animationcomplete", () => {
@@ -207,7 +204,7 @@ export class GameScene extends Phaser.Scene {
 		this.coinLayer.removeTileAt(tile.x, tile.y);
 		this.score++;
 		this.text.setText(this.score.toString());
-		this.sound.play(Keys.Audio.Collect, {
+		this.sound.play(Keys.Sfx.Collect, {
 			volume: 1,
 		});
 

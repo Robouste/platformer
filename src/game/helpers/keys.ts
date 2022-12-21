@@ -15,8 +15,12 @@ export namespace Keys {
 		PlayerAttack = "player-attack",
 	}
 
-	export enum Audio {
+	export enum Musics {
+		MainMenu = "main-menu",
 		Level1 = "level-1",
+	}
+
+	export enum Sfx {
 		Collect = "collect",
 		Jump = "jump",
 		Attack = "attack",
@@ -25,6 +29,7 @@ export namespace Keys {
 
 	export enum Scenes {
 		Preload = "preload",
+		MainMenu = "main-menu",
 		Game = "game",
 	}
 
