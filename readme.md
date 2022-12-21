@@ -1,4 +1,4 @@
-# Starter template for developing Phaser 3 games using Typescript and Webpack
+# Playground for a platformer game
 
 ## Development
 
